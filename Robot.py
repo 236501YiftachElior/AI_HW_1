@@ -115,31 +115,27 @@ class BestFirstSearchRobot(Robot):
                     return GraphSearchSolution(next_node, solve_time=curr_time() - start_time,
                                                n_node_expanded=n_node_expanded, init_heuristic_time=init_heuristic_time)
             ############################################################################################################
+            n_node_expanded += 1
             for possible_state, cost in maze_problem.expand_state(next_node.state):
                 node = Node(possible_state, next_node, g_value=cost + next_node.g_value)
                 priority = self._calc_node_priority(node)
                 if possible_state in self.close:
-                    other_inst = self.close.get_node(possible_state)
-                    self.close.remove_node(other_inst)
-                    other_priority = self._calc_node_priority(other_inst)
-                    if other_priority > priority:
+                    old_node = self.close.get_node(possible_state)
+                    self.close.remove_node(old_node)
+                    if old_node.g_value > node.g_value:
                         self.open.add(node, priority)
                     else:
-                        self.close.add(other_inst)
+                        self.close.add(old_node)
                     continue
-                if possible_state in self.open:
-                    other_inst = self.open.get_node(possible_state)
-                    self.open.remove_node(other_inst)
-                    other_priority = self._calc_node_priority(other_inst)
-                    if priority == other_priority:
-                        node, priority = (other_inst, other_priority)
-                    else:
-                        node, priority = (node, priority) if min(priority, other_priority) == priority else (
-                            other_inst, other_priority)
+                elif possible_state in self.open:
+                    old_node = self.open.get_node(possible_state)
+                    if old_node.g_value > node.g_value:
+                        old_node.g_value = node.g_value
+                        old_node.parent = next_node
+                        self.open.remove_node(old_node)
+                        self.open.add(old_node, priority)
                 else:
-                    n_node_expanded += 1
-                self.open.add(node, priority)
-
+                    self.open.add(node, priority)
             ############################################################################################################
 
         if compute_all_dists:
