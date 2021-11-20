@@ -40,6 +40,7 @@ class NodesCollection:
 
     def add(self, node: Node):
         assert isinstance(node, Node)
+
         assert node.state not in self._collection
         self._collection[node.state] = node
 

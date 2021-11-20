@@ -46,9 +46,20 @@ class BreadthFirstSearchRobot(Robot):
 
             self.close.add(next_node)
             ############################################################################################################
-            # TODO (EX. 4.1): complete code here, delete exception
-            raise NotImplemented
-
+            n_node_expanded = n_node_expanded + 1
+            for possible_state, cost in maze.expand_state(next_node.state):
+                node = Node(possible_state, next_node, g_value=cost + next_node.g_value)
+                if possible_state not in self.close and possible_state not in self.queue:
+                    if maze.is_goal(possible_state):
+                        return GraphSearchSolution(final_node=node, solve_time=curr_time() - start_time,
+                                                   n_node_expanded=n_node_expanded)
+                    self.queue.add(node)
+            # Check if Goal
+            # . if reached, return solution
+            # Per direction in [Left, Forward, Right]:
+            # . Check if possible
+            #   . if True, add to Queue
+            #   . if Not, continue
             ############################################################################################################
         # If we are here, then we didn't find a solution during the search
         assert no_solution_found
@@ -104,8 +115,19 @@ class BestFirstSearchRobot(Robot):
                     return GraphSearchSolution(next_node, solve_time=curr_time() - start_time,
                                                n_node_expanded=n_node_expanded, init_heuristic_time=init_heuristic_time)
             ############################################################################################################
-            # TODO (EX. 5.1): complete code here, delete exception
-            raise NotImplemented
+            n_node_expanded += 1
+            for possible_state, cost in maze_problem.expand_state(next_node.state):
+                node = Node(possible_state, next_node, g_value=cost + next_node.g_value)
+                if possible_state in self.close:
+                    continue
+                priority = self._calc_node_priority(node)
+                if possible_state in self.open:
+                    other_inst = self.open.get_node(possible_state)
+                    self.open.remove_node(other_inst)
+                    other_priority = self._calc_node_priority(other_inst)
+                    node, priority = (node, priority) if min(priority, other_priority) == priority else (
+                        other_inst, other_priority)
+                self.open.add(node, priority)
 
             ############################################################################################################
 
@@ -124,8 +146,8 @@ class UniformCostSearchRobot(BestFirstSearchRobot):
         self.name = "uniform cost search robot"
 
     def _calc_node_priority(self, node):
-        # TODO (Ex. 5.2): complete code here (just return the g value), delete exception
-        raise NotImplemented
+        return node.g_value
+
 
 class WAStartRobot(BestFirstSearchRobot):
     def __init__(self, heuristic, w=0.5, **h_params):
@@ -144,4 +166,4 @@ class WAStartRobot(BestFirstSearchRobot):
 
     def _calc_node_priority(self, node):
         # TODO (Ex. 7.1): complete code here, delete exception
-        raise NotImplemented
+        return (1-self.w)*node.g_value+self.w*self.heuristic(node.state)

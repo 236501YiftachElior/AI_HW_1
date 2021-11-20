@@ -6,12 +6,16 @@ from GraphSearch import NodesCollection
 
 def tail_manhattan_heuristic(state: MazeState):
     # TODO (EX 7.2), implement heuristic, delete exception
-    raise NotImplemented
+    tail_loc = state.tail
+    tail_goal = state.maze_problem.tail_goal
+    return (abs(tail_loc - tail_goal).sum())*state.maze_problem.forward_cost
 
 
 def center_manhattan_heuristic(state: MazeState):
     # TODO (EX 9.2), implement heuristic, delete exception
-    raise NotImplemented
+    center_loc = (state.tail+state.head)/2
+    center_loc_goal = (state.maze_problem.tail_goal+state.maze_problem.head_goal)/2
+    return (abs(center_loc - center_loc_goal).sum())*state.maze_problem.forward_cost
 
 
 class ShorterRobotHeuristic:
