@@ -6,5 +6,7 @@ from Utilities import *
 from Experiments import *
 
 if __name__ == "__main__":
-    test_robot(WAStartRobot, [5], heuristic=tail_manhattan_heuristic)
-    # a = solve_and_display(WAStartRobot,5,heuristic = tail_manhattan_heuristic)
+    # test_robot(WAStartRobot, [99],heuristic = tail_manhattan_heuristic)
+    maze_problem = create_problem(f"maze_{5}")
+    for i in range(2,6):
+        shorter_robot_heuristic_experiment(i)
