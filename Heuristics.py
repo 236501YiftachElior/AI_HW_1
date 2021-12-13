@@ -60,7 +60,7 @@ class ShorterRobotHeuristic:
             node = self.node_dists.get_node(new_state)
             return node.g_value
         else:
-            return 0  # what should we return in this case, so that the heuristic would be as informative as possible
+            return float('inf')  # what should we return in this case, so that the heuristic would be as informative as possible
             # but still admissible
     def __name__(self):
         return f"ShorterRobotHeuristic with K={self.k}"
